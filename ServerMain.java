@@ -1,3 +1,4 @@
+package chat;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -27,8 +28,11 @@ public class ServerMain {
                     System.out.println("Порт должен быть в диапазоне 1-65535");
                     continue;
                 }
-
-                SSocket = new ServerSocket(port);
+                SSocket = new ServerSocket();
+                SSocket.setReuseAddress(true);
+                SSocket.bind(new InetSocketAddress(port));
+                
+               
                 socketCreated = true;
                 System.out.println("Сервер запущен на порту " + port);
 
@@ -102,19 +106,52 @@ public class ServerMain {
         }
         return names;
     }
+    
+    private void stopServer() throws IOException {
+        
+        for(var Client:clients) {
+        	Client.getClientHandler().disconnect();
+        	
+        }
+        if (SSocket != null && !SSocket.isClosed()) {
+            SSocket.close();
+            System.out.println("Серверный сокет закрыт");
+        }
+    }
 
+    public void shutdown() {
+        try {
+            stopServer();
+        } catch (IOException e) {
+            System.err.println("Ошибка при остановке сервера: " + e.getMessage());
+        }
+    }
+    
+    
     public static void main(String[] args) {
         ServerMain server = new ServerMain();
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                System.out.println("Выключение сервера...");
+                server.stopServer();
+            } catch (IOException e) {
+                System.err.println("Проблема во время выключения: " + e.getMessage());
+            }
+        }));
+        
         server.initialize();
-
+        
+        new ExitWaiter(server).start();
+        
+        
         if (server.SSocket == null) {
             System.out.println("Не удалось создать серверный сокет");
             return;
         }
-
+        
         System.out.println("Сервер ожидает подключений...");
 
-        while (true) {
+        while (!server.SSocket.isClosed()) {
             try {
                 Socket clientSocket = server.SSocket.accept();
 
@@ -122,12 +159,51 @@ public class ServerMain {
                 System.out.println("Новое подключение (ожидание имени)...");
 
                 ClientHandler clientHandler = new ClientHandler(clientSocket);
-                server.add(clientHandler);
-
+                server.add(clientHandler);}
+            
+                catch (SocketException e) {
+                    
+                    if (server.SSocket == null || server.SSocket.isClosed()) {
+                        System.out.println("Сервер завершает работу");
+                        break;
+                    } else {
+                        System.err.println("Ошибка сокета: " + e.getMessage());
+                    }
             } catch (IOException e) {
                 e.printStackTrace();
                 break;
             }
+            
         }
     }
 }
+
+ class ExitWaiter {
+	 ServerMain server;
+	 ExitWaiter(ServerMain server){
+		 this.server=server;
+	 }
+    public void start() {
+        Thread waiter = new Thread(() -> {
+            BufferedReader reader = new BufferedReader(
+                new InputStreamReader(System.in));
+            
+            try {
+                while (true) {
+                    if ("exit".equals(reader.readLine())) {
+                        server.shutdown();
+                        break;
+                    }
+                }
+            } catch (IOException e) {
+                // 
+            }
+        });
+        
+        waiter.setDaemon(true);
+        waiter.start();
+    }
+}
+
+
+

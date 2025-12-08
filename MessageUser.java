@@ -1,3 +1,4 @@
+package chat;
 import java.io.Serializable;
 
 public class MessageUser extends Message implements Serializable {
