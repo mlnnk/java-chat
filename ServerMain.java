@@ -1,4 +1,3 @@
-package chat;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -31,13 +30,8 @@ public class ServerMain {
                 SSocket = new ServerSocket();
                 SSocket.setReuseAddress(true);
                 SSocket.bind(new InetSocketAddress(port));
-<<<<<<< HEAD
 
 
-=======
-                
-               
->>>>>>> 8d4a810eda4bcfa0dd0b63691182f8200565ebc0
                 socketCreated = true;
                 System.out.println("Сервер запущен на порту " + port);
 
@@ -105,20 +99,7 @@ public class ServerMain {
         }
         return names;
     }
-    
-    private void stopServer() throws IOException {
-        
-        for(var Client:clients) {
-        	Client.getClientHandler().disconnect();
-        	
-        }
-        if (SSocket != null && !SSocket.isClosed()) {
-            SSocket.close();
-            System.out.println("Серверный сокет закрыт");
-        }
-    }
 
-<<<<<<< HEAD
     private void stopServer() throws IOException {
 
         for(var Client:clients) {
@@ -130,8 +111,6 @@ public class ServerMain {
         }
     }
 
-=======
->>>>>>> 8d4a810eda4bcfa0dd0b63691182f8200565ebc0
     public void shutdown() {
         try {
             stopServer();
@@ -139,12 +118,7 @@ public class ServerMain {
             System.err.println("Ошибка при остановке сервера: " + e.getMessage());
         }
     }
-<<<<<<< HEAD
 
-=======
-    
-    
->>>>>>> 8d4a810eda4bcfa0dd0b63691182f8200565ebc0
     public static void main(String[] args) {
         ServerMain server = new ServerMain();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -155,26 +129,17 @@ public class ServerMain {
                 System.err.println("Проблема во время выключения: " + e.getMessage());
             }
         }));
-<<<<<<< HEAD
 
         server.initialize();
 
         new ExitWaiter(server).start();
 
 
-=======
-        
-        server.initialize();
-        
-        new ExitWaiter(server).start();
-        
-        
->>>>>>> 8d4a810eda4bcfa0dd0b63691182f8200565ebc0
         if (server.SSocket == null) {
             System.out.println("Не удалось создать серверный сокет");
             return;
         }
-        
+
         System.out.println("Сервер ожидает подключений...");
 
         while (!server.SSocket.isClosed()) {
@@ -185,7 +150,6 @@ public class ServerMain {
 
                 ClientHandler clientHandler = new ClientHandler(clientSocket);
                 server.add(clientHandler);}
-<<<<<<< HEAD
 
             catch (SocketException e) {
 
@@ -195,31 +159,15 @@ public class ServerMain {
                 } else {
                     System.err.println("Ошибка сокета: " + e.getMessage());
                 }
-=======
-            
-                catch (SocketException e) {
-                    
-                    if (server.SSocket == null || server.SSocket.isClosed()) {
-                        System.out.println("Сервер завершает работу");
-                        break;
-                    } else {
-                        System.err.println("Ошибка сокета: " + e.getMessage());
-                    }
->>>>>>> 8d4a810eda4bcfa0dd0b63691182f8200565ebc0
             } catch (IOException e) {
                 e.printStackTrace();
                 break;
             }
-<<<<<<< HEAD
 
-=======
-            
->>>>>>> 8d4a810eda4bcfa0dd0b63691182f8200565ebc0
         }
     }
 }
 
-<<<<<<< HEAD
 class ExitWaiter {
     ServerMain server;
 
@@ -232,18 +180,6 @@ class ExitWaiter {
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(System.in));
 
-=======
- class ExitWaiter {
-	 ServerMain server;
-	 ExitWaiter(ServerMain server){
-		 this.server=server;
-	 }
-    public void start() {
-        Thread waiter = new Thread(() -> {
-            BufferedReader reader = new BufferedReader(
-                new InputStreamReader(System.in));
-            
->>>>>>> 8d4a810eda4bcfa0dd0b63691182f8200565ebc0
             try {
                 while (true) {
                     if ("exit".equals(reader.readLine())) {
@@ -252,7 +188,6 @@ class ExitWaiter {
                     }
                 }
             } catch (IOException e) {
-<<<<<<< HEAD
                 //
             }
         });
@@ -261,16 +196,3 @@ class ExitWaiter {
         waiter.start();
     }
 }
-=======
-                // 
-            }
-        });
-        
-        waiter.setDaemon(true);
-        waiter.start();
-    }
-}
-
-
-
->>>>>>> 8d4a810eda4bcfa0dd0b63691182f8200565ebc0

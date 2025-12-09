@@ -1,4 +1,3 @@
-package chat;
 import java.io.Serializable;
 
 public class MessageDisconnect extends Message implements Serializable {
