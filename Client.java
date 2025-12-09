@@ -19,7 +19,6 @@ public class Client {
         int serverPort = 0;
 
         try {
-            // Запрос имени пользователя
             System.out.println("Введите ваше имя (никнейм):");
             nickname = stdIn.readLine();
 
@@ -31,14 +30,14 @@ public class Client {
             clientSocket = new Socket(serverIP, serverPort);
             this.stdIn = stdIn;
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Произошла ошибка.");
+            //e.printStackTrace();
         }
     }
 
     void connect() throws IOException {
         serverOut = new PrintWriter(clientSocket.getOutputStream(), true);
 
-        // Сначала отправляем серверу свое имя
         serverOut.println("/nickname " + nickname);
 
         ReceivedHandler handler = new ReceivedHandler(clientSocket.getInputStream());
@@ -50,11 +49,9 @@ public class Client {
                 serverOut.println("/exit");
                 break;
             }
-            // Отправляем только текст сообщения без имени
             serverOut.println(userInput);
         }
 
-        // Закрываем соединение
         serverOut.close();
         clientSocket.close();
     }
@@ -69,7 +66,8 @@ public class Client {
             try {
                 command = stdIn.readLine();
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("Произошла ошибка.");
+                //e.printStackTrace();
             }
 
             if (command.equals(connectCommand)) {
@@ -86,7 +84,8 @@ public class Client {
         try {
             cl.connect();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Произошла ошибка.");
+            //e.printStackTrace();
         }
     }
 }
