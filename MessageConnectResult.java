@@ -1,3 +1,4 @@
+package chat;
 import java.io.Serializable;
 
 public class MessageConnectResult extends MessageResult implements Serializable {

@@ -1,3 +1,4 @@
+package chat;
 interface CMD {
     static final byte CMD_CONNECT     = 1;  // Подключение к чату
     static final byte CMD_DISCONNECT  = 2;  // Отключение от чата
